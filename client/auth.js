@@ -10,6 +10,7 @@ function login() {
     body: JSON.stringify({ username, password }),
   })
     .then((res) => {
+      if (!res.ok) throw new Error("Invalid credentials");
       return res.json();
     })
     .then((data) => {
