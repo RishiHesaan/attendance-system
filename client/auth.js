@@ -26,3 +26,10 @@ function logout() {
   localStorage.removeItem("token");
   window.location.href = "login.html";
 }
+const isLoginPage = window.location.pathname.includes("login.html");
+const isHomePage = window.location.pathname.includes("home.html");
+const token = localStorage.getItem("token");
+
+if (!token && isHomePage) {
+  window.location.href = "login.html";
+}
