@@ -15,7 +15,9 @@ function login() {
     })
     .then((data) => {
       localStorage.setItem("token", data.token);
+      window.location.href = "home.html";
     })
+
     .catch((err) => {
       document.getElementById("error").innerText = err.message;
     });
