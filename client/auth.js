@@ -33,3 +33,6 @@ const token = localStorage.getItem("token");
 if (!token && isHomePage) {
   window.location.href = "login.html";
 }
+if (token && isLoginPage) {
+  window.location.href = "home.html";
+}
