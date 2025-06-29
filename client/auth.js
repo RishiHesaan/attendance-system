@@ -22,3 +22,7 @@ function login() {
       document.getElementById("error").innerText = err.message;
     });
 }
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
+}
