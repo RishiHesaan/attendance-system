@@ -20,30 +20,6 @@ If someone has shared the GitHub link with you, follow these steps to get it on 
 
 You are now ready to run the application.
 
-## Project Folder Structure
-
-attendance-system/
-│
-├── client/ → Frontend files (login and attendance UI)
-│ ├── login.html
-│ ├── home.html
-│ └── auth.js
-│
-├── server/ → Backend Java Spring Boot project
-│ ├── controller/
-│ │ ├── LoginController.java
-│ │ └── AttendanceController.java
-│ ├── util/
-│ │ └── JwtUtil.java
-│ └── users.txt → Stores valid usernames and passwords
-│
-├── docs/ → Folder containing screenshots for each task
-│ ├── task1_login_screen.png
-│ ├── task2_dashboard_view.png
-│ ├── task3_submit_success.png
-│
-└── ReadMe.md
-
 ---
 
 ## How to Use the Application
