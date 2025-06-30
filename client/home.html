@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .classroom {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .student-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .student-row select {
+            margin-left: 10px;
+        }
+        .student-row button {
+            margin-left: 10px;
+        }
+        .add-student {
+            margin-top: 10px;
+        }
+        .summary {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Attendance Dashboard</h2>
+    <p style="color: #444;">Hello! You're logged in. Mark your students’ attendance below.</p>
+
+    <button onclick="logout()">Logout</button>
+    <hr>
+
+    <div class="summary" id="summaryBox">
+        <strong>Summary:</strong> Loading attendance counts...
+    </div>
+
+    <div id="classrooms"></div>
+
+    <button onclick="submitAttendance()">Submit Attendance</button>
+
+    <script>
+        const classrooms = [
+            {
+                classroom: "Classroom A",
+                students: [
+            { name: "Rishi", status: "Present" },
+            { name: "Ragul", status: "Present" },
+            { name: "Rifqi", status: "Present" },
+            { name: "Vijay", status: "Present" },
+            { name: "Ajith", status: "Absent" },
+            { name: "Rajini", status: "Present" },
+            { name: "Kamal", status: "Present" },
+            { name: "Vikram", status: "Present" },
+            { name: "Surya", status: "Present" },
+            { name: "Dhanush", status: "Absent" }
+        ]
+            },
+            {
+                classroom: "Classroom B",
+                 students: [
+            { name: "Atlee", status: "Absent" },
+            { name: "Shankar", status: "Absent" },
+            { name: "KS", status: "Present" },
+            { name: "KV", status: "Present" },
+            { name: "Lokesh", status: "Present" }
+        ]
+            }
+        ];
+
+        function renderClassrooms() {
+            const container = document.getElementById("classrooms");
+            container.innerHTML = "";
+
+            classrooms.forEach((classroom, classIndex) => {
+                const classDiv = document.createElement("div");
+                classDiv.className = "classroom";
+
+                const title = document.createElement("h3");
+                title.textContent = `${classroom.classroom} (${classroom.students.length} students)`;
+                classDiv.appendChild(title);
+
+                classroom.students.forEach((student, studentIndex) => {
+                    const row = document.createElement("div");
+                    row.className = "student-row";
+
+                    const nameSpan = document.createElement("span");
+                    nameSpan.textContent = student.name;
+
+                    const dropdown = document.createElement("select");
+                    const options = ["Present", "Absent"];
+                    options.forEach(option => {
+                        const opt = document.createElement("option");
+                        opt.value = option;
+                        opt.text = option;
+                        if (student.status === option) opt.selected = true;
+                        dropdown.appendChild(opt);
+                    });
+
+                    dropdown.onchange = () => {
+                        student.status = dropdown.value;
+                    };
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.textContent = "Remove";
+                    deleteBtn.onclick = () => {
+                        classroom.students.splice(studentIndex, 1);
+                        renderClassrooms();
+                    };
+
+                    row.appendChild(nameSpan);
+                    row.appendChild(dropdown);
+                    row.appendChild(deleteBtn);
+                    classDiv.appendChild(row);
+                });
+
+                const addContainer = document.createElement("div");
+                addContainer.className = "add-student";
+
+                const input = document.createElement("input");
+                input.placeholder = "New student name";
+
+                const addBtn = document.createElement("button");
+                addBtn.textContent = "Add Student";
+                addBtn.onclick = () => {
+                    if (input.value.trim()) {
+                        classroom.students.push({ name: input.value.trim(), status: "Present" });
+                        renderClassrooms();
+                    }
+                };
+
+                addContainer.appendChild(input);
+                addContainer.appendChild(addBtn);
+                classDiv.appendChild(addContainer);
+
+                container.appendChild(classDiv);
+            });
+        }
+
+        function submitAttendance() {
+            fetch("http://localhost:8080/api/save-attendance", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(classrooms)
+            })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+                loadSummary();  // Refresh summary after submit
+            })
+            .catch(err => alert("Failed to submit attendance"));
+        }
+
+        function loadSummary() {
+            fetch("http://localhost:8080/api/attendance-summary")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("summaryBox").innerHTML = `
+                        <strong>Summary:</strong><br>
+                        Present: ${data.Present}<br>
+                        Absent: ${data.Absent}
+                    `;
+                })
+                .catch(() => {
+                    document.getElementById("summaryBox").textContent = "Failed to load summary.";
+                });
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "login.html";
+        } else {
+            renderClassrooms();
+            loadSummary();
+        }
+    </script>
+</body>
+</html>
