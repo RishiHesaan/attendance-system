@@ -7,9 +7,8 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "my-secret-key"; // For demo purposes only
+    private static final String SECRET_KEY = "my-super-secret-key-which-is-very-long-and-safe";
 
-    // Token valid for 1 hour
     private static final long EXPIRATION_TIME = 60 * 60 * 1000;
 
     public static String generateToken(String username) {
