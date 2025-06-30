@@ -1,2 +1,2 @@
-admin:password123
-teacher:teachpass
+admin:secret
+teacher:secret
